@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      #archisman-editor {
+        position: relative;
+        border: 1px solid #ccc;
+        padding: 10px;
+      }
+
+      #archisman-editor-info {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        color: #999;
+      }
+    </style>
+  </head>
+
+  <body>
+    <archisman-editor></archisman-editor>
+
+    <template id="archisman-editor-template">
+      <div id="archisman-editor">
+        <textarea id="archisman-editor-textarea"></textarea>
+        <div id="archisman-editor-info">
+          0 characters, 0 words, 0 lines
+        </div>
+      </div>
+    </template>
+
+    <script>
+      customElements.define("archisman-editor", class extends HTMLElement {
+        constructor() {
+          super();
+
+          // Attach the shadow root
+          this.attachShadow({ mode: "open" });
+
+          // Clone the template and add it to the shadow root
+          const template = document.querySelector("#archisman-editor-template");
+          const instance = template.content.cloneNode(true);
+          this.shadowRoot.appendChild(instance);
+
+          // Get references to the elements
+          this.textarea = this.shadowRoot.querySelector("#archisman-editor-textarea");
+          this.info = this.shadowRoot.querySelector("#archisman-editor-info");
+
+          // Update the information when the textarea changes
+          this.textarea.addEventListener("input", this.updateInfo.bind(this));
+        }
+
+        updateInfo() {
+          const value = this.textarea.value;
+          const characters = value.length;
+          const words = value.split(/\s+/).length;
+          const lines = value.split(/\r\n|\r|\n/).length;
+          this.info.textContent = `${characters} characters, ${words} words, ${lines} lines`;
+        }
+      });
+    </script>
+  </body>
+</html>
